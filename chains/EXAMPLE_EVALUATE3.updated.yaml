@@ -1,0 +1,558 @@
+theory:
+  camb:
+    version: 1.3.5
+    path: ./external_modules/code/CAMB
+    speed: 0.3
+    stop_at_error: false
+    extra_args:
+      AccuracyBoost: 1.05
+      num_massive_neutrinos: 1
+      nnu: 3.046
+      dark_energy_model: ppf
+    use_renames: true
+    external_primordial_pk: false
+    renames:
+      omegabh2: ombh2
+      omegach2: omch2
+      omegal: omega_de
+      omegak: omk
+      yhe: YHe
+      yheused: YHe
+      YpBBN: Y_p
+      zrei: zre
+      omegan2: omnuh2
+    input_params:
+    - As
+    - ns
+    - nrun
+    - nrunrun
+    - cosmomc_theta
+    - omegabh2
+    - omegach2
+    - mnu
+    - tau
+    - w
+    - wa
+    - omegak
+    output_params:
+    - H0
+    - omegal
+    - omegam
+    - sigma8
+    - age
+    - rdrag
+    - yheused
+    - omegan2
+    - zstar
+    - rstar
+    - thetastar
+    - DAstar
+    - zdrag
+    - kd
+    - thetad
+    - zeq
+    - keq
+    - thetaeq
+    - thetarseq
+    - zrei
+    - DH
+likelihood:
+  sn.roman_o:
+    path: ./external_modules/data/sn_data
+    dataset_file: ROMAN_O/WFIRST_G10_0.dataset
+    dataset_params: null
+    alpha_beta_names:
+    - alpha_jla
+    - beta_jla
+    use_abs_mag: false
+    aliases:
+    - JLA
+    speed: 20
+    type: SN
+    stop_at_error: false
+    version: null
+    input_params:
+    - alpha_jla
+    - beta_jla
+    output_params: []
+  planck_2018_highl_plik.TT:
+    path: ./external_modules/
+    clik_file: plc_3.0/hi_l/plik/plik_rd12_HM_v22_TT.clik
+    product_id: '151902'
+    aliases:
+    - plikHM_TT
+    speed: 50
+    prior:
+      SZ: 'lambda ksz_norm, A_sz: stats.norm.logpdf(ksz_norm+1.6*A_sz, loc=9.5, scale=3.0)'
+    type: CMB
+    stop_at_error: false
+    version: null
+    input_params:
+    - A_planck
+    - calib_100T
+    - calib_217T
+    - cib_index
+    - A_cib_217
+    - xi_sz_cib
+    - A_sz
+    - ksz_norm
+    - gal545_A_100
+    - gal545_A_143
+    - gal545_A_143_217
+    - gal545_A_217
+    - A_sbpx_100_100_TT
+    - A_sbpx_143_143_TT
+    - A_sbpx_143_217_TT
+    - A_sbpx_217_217_TT
+    - ps_A_100_100
+    - ps_A_143_143
+    - ps_A_143_217
+    - ps_A_217_217
+    output_params: []
+prior:
+  SZ: 'lambda ksz_norm, A_sz: stats.norm.logpdf(ksz_norm+1.6*A_sz, loc=9.5, scale=3.0)'
+params:
+  logA:
+    prior:
+      min: 1.61
+      max: 3.91
+    ref:
+      dist: norm
+      loc: 3.0448
+      scale: 0.05
+    proposal: 0.05
+    latex: \log(10^{10} A_\mathrm{s})
+    drop: true
+  As:
+    value: 'lambda logA: 1e-10*np.exp(logA)'
+    latex: A_\mathrm{s}
+    derived: true
+  ns:
+    prior:
+      min: 0.92
+      max: 1.05
+    ref:
+      dist: norm
+      loc: 0.96605
+      scale: 0.005
+    proposal: 0.005
+    latex: n_\mathrm{s}
+  theta_MC_100:
+    prior:
+      min: 0.5
+      max: 10
+    ref:
+      dist: norm
+      loc: 1.04109
+      scale: 0.001
+    proposal: 0.001
+    latex: 100\theta_\mathrm{MC}
+    drop: true
+    renames: theta
+  cosmomc_theta:
+    value: 'lambda theta_MC_100: 1.e-2*theta_MC_100'
+    derived: false
+  H0:
+    latex: H_0
+    min: 20
+    max: 100
+    derived: true
+  omegabh2:
+    prior:
+      min: 0.01
+      max: 0.04
+    ref:
+      dist: norm
+      loc: 0.022383
+      scale: 0.005
+    proposal: 0.005
+    latex: \Omega_\mathrm{b} h^2
+    renames:
+    - ombh2
+  omegach2:
+    prior:
+      min: 0.06
+      max: 0.2
+    ref:
+      dist: norm
+      loc: 0.12011
+      scale: 0.03
+    proposal: 0.03
+    latex: \Omega_\mathrm{c} h^2
+    renames:
+    - omch2
+  mnu:
+    value: 0.06
+  tau:
+    prior:
+      dist: norm
+      loc: 0.0544
+      scale: 0.0073
+    ref:
+      dist: norm
+      loc: 0.055
+      scale: 0.006
+    proposal: 0.003
+    latex: \tau_\mathrm{reio}
+  w0pwa:
+    prior:
+      min: -5
+      max: -0.01
+    ref:
+      dist: norm
+      loc: -0.99
+      scale: 0.05
+    proposal: 0.05
+    latex: \log(10^{10} A_\mathrm{s})
+    drop: true
+  w:
+    prior:
+      min: -3
+      max: -0.01
+    ref:
+      dist: norm
+      loc: -0.99
+      scale: 0.05
+    proposal: 0.05
+    latex: w_{0,\mathrm{DE}}
+  wa:
+    value: 'lambda w0pwa, w: w0pwa - w'
+    derived: false
+    latex: w_{a,\mathrm{DE}}
+  omegal:
+    latex: \Omega_\Lambda
+    derived: true
+    renames:
+    - omega_de
+  omegam:
+    latex: \Omega_\mathrm{m}
+    derived: true
+  omegamh2:
+    derived: 'lambda omegam, H0: omegam*(H0/100)**2'
+    latex: \Omega_\mathrm{m} h^2
+  omegab:
+    derived: 'lambda omegabh2, H0: omegabh2/((H0/100)**2)'
+    latex: \Omega_\mathrm{b}
+  omegac:
+    derived: 'lambda omegach2, H0: omegach2/((H0/100)**2)'
+    latex: \Omega_\mathrm{c}
+  sigma8:
+    latex: \sigma_8
+    derived: true
+  s8h5:
+    derived: 'lambda sigma8, H0: sigma8*(H0*1e-2)**(-0.5)'
+    latex: \sigma_8/h^{0.5}
+  s8omegamp5:
+    derived: 'lambda sigma8, omegam: sigma8*omegam**0.5'
+    latex: \sigma_8 \Omega_\mathrm{m}^{0.5}
+  s8omegamp25:
+    derived: 'lambda sigma8, omegam: sigma8*omegam**0.25'
+    latex: \sigma_8 \Omega_\mathrm{m}^{0.25}
+  A:
+    derived: 'lambda As: 1e9*As'
+    latex: 10^9 A_\mathrm{s}
+  age:
+    latex: '{\rm{Age}}/\mathrm{Gyr}'
+    derived: true
+  rdrag:
+    latex: r_\mathrm{drag}
+    derived: true
+  yheused:
+    latex: Y_P^\mathrm{BBN}
+    derived: true
+    renames:
+    - YHe
+  omegan2:
+    latex: \Omega_\mathrm{\\nu} h^2
+    derived: true
+    renames:
+    - omnuh2
+  omegan:
+    derived: 'lambda omegan2, H0: omegan2/((H0/100)**2)'
+    latex: \Omega_\mathrm{\\nu}
+  zstar:
+    latex: z_*
+    derived: true
+  rstar:
+    latex: r_*
+    derived: true
+  thetastar:
+    latex: 100\theta_*
+    derived: true
+  DAstar:
+    latex: D_\mathrm{A}/\mathrm{Gpc}
+    derived: true
+  zdrag:
+    latex: z_\mathrm{drag}
+    derived: true
+  kd:
+    latex: k_\mathrm{D}
+    derived: true
+  thetad:
+    latex: 100\theta_\mathrm{D}
+    derived: true
+  zeq:
+    latex: z_\mathrm{eq}
+    derived: true
+  keq:
+    latex: k_\mathrm{eq}
+    derived: true
+  thetaeq:
+    latex: 100\theta_\mathrm{eq}
+    derived: true
+  thetarseq:
+    latex: 100\theta_\mathrm{s,eq}
+    derived: true
+  DHBBN:
+    derived: 'lambda DH: 10**5*DH'
+    latex: 10^5 \mathrm{D}/\mathrm{H}
+  zrei:
+    latex: z_\mathrm{re}
+    derived: true
+    renames:
+    - zre
+  nrun:
+    value: 0.0
+    latex: n_\mathrm{run}
+  nrunrun:
+    value: 0.0
+    latex: n_\mathrm{run,run}
+  omegak:
+    value: 0.0
+    latex: \Omega_k
+    renames:
+    - omk
+  alpha_jla:
+    value: 1.0
+    latex: \alpha_\mathrm{JLA}
+  beta_jla:
+    value: 4.0
+    latex: \beta_\mathrm{JLA}
+  A_planck:
+    prior:
+      dist: norm
+      loc: 1
+      scale: 0.0025
+    ref:
+      dist: norm
+      loc: 1
+      scale: 0.002
+    proposal: 0.0005
+    latex: y_\mathrm{cal}
+    renames: calPlanck
+  calib_100T:
+    prior:
+      dist: norm
+      loc: 1.0002
+      scale: 0.0007
+    ref:
+      dist: norm
+      loc: 1.0002
+      scale: 0.001
+    proposal: 0.0005
+    latex: c_{100}
+    renames: cal0
+  calib_217T:
+    prior:
+      dist: norm
+      loc: 0.99805
+      scale: 0.00065
+    ref:
+      dist: norm
+      loc: 0.99805
+      scale: 0.001
+    proposal: 0.0005
+    latex: c_{217}
+    renames: cal2
+  cib_index:
+    value: -1.3
+  A_cib_217:
+    prior:
+      dist: uniform
+      min: 0
+      max: 200
+    ref:
+      dist: norm
+      loc: 67
+      scale: 10
+    proposal: 1.2
+    latex: A^\mathrm{CIB}_{217}
+    renames: acib217
+  xi_sz_cib:
+    prior:
+      dist: uniform
+      min: 0
+      max: 1
+    ref:
+      dist: halfnorm
+      loc: 0
+      scale: 0.1
+    proposal: 0.1
+    latex: \xi^{\mathrm{tSZ}\times\mathrm{CIB}}
+    renames: xi
+  A_sz:
+    prior:
+      dist: uniform
+      min: 0
+      max: 10
+    ref:
+      dist: norm
+      loc: 7
+      scale: 2
+    proposal: 0.6
+    latex: A^\mathrm{tSZ}_{143}
+    renames: asz143
+  ksz_norm:
+    prior:
+      dist: uniform
+      min: 0
+      max: 10
+    ref:
+      dist: halfnorm
+      loc: 0
+      scale: 3
+    proposal: 1
+    latex: A^\mathrm{kSZ}
+    renames: aksz
+  gal545_A_100:
+    prior:
+      dist: norm
+      loc: 8.6
+      scale: 2
+    ref:
+      dist: norm
+      loc: 7
+      scale: 2
+    proposal: 1
+    latex: A^\mathrm{dustTT}_{100}
+    renames: kgal100
+  gal545_A_143:
+    prior:
+      dist: norm
+      loc: 10.6
+      scale: 2
+    ref:
+      dist: norm
+      loc: 9
+      scale: 2
+    proposal: 1
+    latex: A^\mathrm{dustTT}_{143}
+    renames: kgal143
+  gal545_A_143_217:
+    prior:
+      dist: norm
+      loc: 23.5
+      scale: 8.5
+    ref:
+      dist: norm
+      loc: 21
+      scale: 4
+    proposal: 1.5
+    latex: A^\mathrm{dustTT}_{\mathrm{143}\times\mathrm{217}}
+    renames: kgal143217
+  gal545_A_217:
+    prior:
+      dist: norm
+      loc: 91.9
+      scale: 20
+    ref:
+      dist: norm
+      loc: 80
+      scale: 15
+    proposal: 2
+    latex: A^\mathrm{dustTT}_{217}
+    renames: kgal217
+  A_sbpx_100_100_TT:
+    value: 1
+  A_sbpx_143_143_TT:
+    value: 1
+  A_sbpx_143_217_TT:
+    value: 1
+  A_sbpx_217_217_TT:
+    value: 1
+  ps_A_100_100:
+    prior:
+      dist: uniform
+      min: 0
+      max: 400
+    ref:
+      dist: norm
+      loc: 257
+      scale: 24
+    proposal: 17
+    latex: A^\mathrm{PS}_{100}
+    renames: aps100
+  ps_A_143_143:
+    prior:
+      dist: uniform
+      min: 0
+      max: 400
+    ref:
+      dist: norm
+      loc: 47
+      scale: 10
+    proposal: 3
+    latex: A^\mathrm{PS}_{143}
+    renames: aps143
+  ps_A_143_217:
+    prior:
+      dist: uniform
+      min: 0
+      max: 400
+    ref:
+      dist: norm
+      loc: 40
+      scale: 12
+    proposal: 2
+    latex: A^\mathrm{PS}_{\mathrm{143}\times\mathrm{217}}
+    renames: aps143217
+  ps_A_217_217:
+    prior:
+      dist: uniform
+      min: 0
+      max: 400
+    ref:
+      dist: norm
+      loc: 104
+      scale: 13
+    proposal: 2.5
+    latex: A^\mathrm{PS}_{217}
+    renames: aps217
+  chi2__CMB:
+    latex: \chi^2_\mathrm{CMB}
+    derived: true
+  chi2__SN:
+    latex: \chi^2_\mathrm{SN}
+    derived: true
+sampler:
+  evaluate:
+    N: 1
+    override:
+      logA: 3.0448
+      ns: 0.96605
+      theta_MC_100: 1.04088
+      omegabh2: 0.022383
+      omegach2: 0.12011
+      tau: 0.0543
+      w0pwa: -0.968859
+      w: -0.909098
+      A_planck: 1.00138
+      calib_100T: 1.00136
+      calib_217T: 0.997534
+      A_cib_217: 74.4119
+      xi_sz_cib: 0.127483
+      A_sz: 5.954
+      ksz_norm: 2.93033
+      gal545_A_100: 7.06323
+      gal545_A_143: 8.49817
+      gal545_A_143_217: 23.3975
+      gal545_A_217: 78.1438
+      ps_A_100_100: 222.559
+      ps_A_143_143: 60.2773
+      ps_A_143_217: 30.2718
+      ps_A_217_217: 109.975
+    seed: null
+    version: null
+stop_at_error: false
+output: EXAMPLE_EVALUATE3
+version: 3.1.1
